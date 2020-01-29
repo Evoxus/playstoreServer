@@ -7,7 +7,7 @@ app.use(morgan('dev'));
 
 app.get('/apps', (req, res) => {
   // VALIDATION
-  const {sort, genre} = req.query;
+  const { sort, genre } = req.query;
   let sortFormatted;
   let genreFormatted;
   if (sort) {
@@ -24,7 +24,17 @@ app.get('/apps', (req, res) => {
   }
   // MIDDLEWARE
   let results = playstore;
-  if (sortFormatted) {
+  if (sortFormatted === 'App') {
+    results = playstore.sort((a, b) => {
+      if (a[sortFormatted] > b[sortFormatted]) {
+        return 1;
+      } else if (a[sortFormatted] < b[sortFormatted]) {
+        return -1;
+      }
+      return 0;
+    })
+  } else {
+    // Rating Sort
     results = playstore.sort((a, b) => {
       if (a[sortFormatted] < b[sortFormatted]) {
         return 1;
@@ -40,6 +50,4 @@ app.get('/apps', (req, res) => {
   res.json(results);
 })
 
-app.listen(8000, () => {
-  console.log('listening on port 8000');
-})
+module.exports = app;
